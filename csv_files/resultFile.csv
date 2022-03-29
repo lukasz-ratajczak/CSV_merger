@@ -1,8 +1,11 @@
- id,firstname,lastname,email , id,firstname,lastname,email 
- 0,Riannon,Etom,Riannon.Etom@yopmail.com , 0,Keelia,Doig,Keelia.Doig@yopmail.com 
- 1,Elbertina,Bandeen,Elbertina.Bandeen@yopmail.com , 1,Merry,Hoban,Merry.Hoban@yopmail.com 
- 2,Celene,Peti,Celene.Peti@yopmail.com , 2,Zaria,Karylin,Zaria.Karylin@yopmail.com 
- 3,Darci,Thilda,Darci.Thilda@yopmail.com , 3,Aigneis,Pitt,Aigneis.Pitt@yopmail.com 
- 4,Sybille,Jena,Sybille.Jena@yopmail.com , 4,Dode,Aprile,Holt.Aprile@yopmail.com 
- ,,, , 5,Zaria,Hoban,Zupe.Aprile@yopmail.com 
- ,,, , 6,Merry,Aigneis,Mute.Aprile@yopmail.com 
+country,city,id,firstname,lastname,email
+Nauru,Port Louis,0,Madalyn,Zina,Madalyn.Zina@yopmail.com
+Seychelles,Calgary,1,Mallory,Fosque,Mallory.Fosque@yopmail.com
+Cote DIvoire,Melbourne,2,Lexine,Giule,Lexine.Giule@yopmail.com
+Hungary,London,3,Sabina,Raffo,Sabina.Raffo@yopmail.com
+Antarctica,Bratislava,4,Randa,Avi,Randa.Avi@yopmail.com
+Korea,Democratic PeopleS Republic of Stuttgart,5,Ericka,Mendez,Ericka.Mendez@yopmail.com
+,,6,Tera,Lia,Tera.Lia@yopmail.com
+,,7,Rosabelle,Bouchard,Rosabelle.Bouchard@yopmail.com
+,,8,Damaris,Swanhildas,Damaris.Swanhildas@yopmail.com
+,,9,Leeanne,Milde,Leeanne.Milde@yopmail.com

@@ -13,57 +13,103 @@ join_type = user_input_decision_list[4].lower()
 first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
 join_type = "right"
-column_name = 'lastname'
-
+column_name = 'id'
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
 
 with open(first_file_path, newline='') as csv_file:
-    ffile_list = list(csv.reader(csv_file, delimiter=' ', quotechar='|'))
+    ffile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
 
 with open(second_file_path, newline='') as csv_file:
-    sfile_list = list(csv.reader(csv_file, delimiter=' ', quotechar='|'))
-
-
+    sfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
 
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
-                                quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-    if len(ffile_list) <= len(sfile_list):
-        first_file_list = sfile_list
-        second_file_list = ffile_list
-    else:
+                                quotechar=',', quoting=csv.QUOTE_MINIMAL)
+    """if len(ffile_list) >= len(sfile_list):
         first_file_list = ffile_list
         second_file_list = sfile_list
+    else:
+        first_file_list = sfile_list
+        second_file_list = ffile_list"""
 
     index = 0
     result = []
 
+    ffile_header = ffile_list[0][0].split(',')
+    sfile_header = sfile_list[0][0].split(',')
+
 
     # LEFT
     if join_type == 'left':
-        for row in first_file_list:
+
+        for row in ffile_list:
+            result.append([elem for elem in row[0].split(',')])
+        for row in sfile_list:
             try:
-                result_writter.writerow(row + second_file_list[index])
+                result[index] += row[0].split(',')
             except IndexError:
-                result_writter.writerow(row + [","*(len(second_file_list[0][0].split(','))-1)])
+                result.append([""]*len(ffile_list[0][0].split(',')) + row[0].split(','))
             index += 1
+
+        index = 0
+        for row in result[0]:
+            check = 0
+            for elem in result[0]:
+                if elem == row:
+                    check +=1
+                if check > 1:
+                    rmv_column = index
+            index += 1
+
+        index = 0
+        for row in result[::]:
+            try:
+                result[::][index].pop(rmv_column)
+            except IndexError:
+                break
+            index += 1
+
+        for row in result:
+            result_writter.writerow(row)
 
     # RIGHT
     if join_type == 'right':
-        for row in first_file_list:
+        for row in sfile_list:
+            result.append([elem for elem in row[0].split(',')])
+        for row in ffile_list:
             try:
-                result_writter.writerow(second_file_list[index] + row)
+                result[index] += row[0].split(',')
             except IndexError:
-                result_writter.writerow([","*(len(second_file_list[0][0].split(','))-1)] + row)
+                result.append([""]*len(sfile_list[0][0].split(',')) + row[0].split(','))
             index += 1
 
+        index = 0
+        for row in result[0]:
+            check = 0
+            for elem in result[0]:
+                if elem == row:
+                    check += 1
+            if check > 1:
+                rmv_column = index
+
+        index = 0
+        for row in result[::]:
+            try:
+                result[::][index].pop(rmv_column)
+            except IndexError:
+                break
+            index += 1
+
+        for row in result:
+            result_writter.writerow(row)
+
+
+
     # INNER
-    if join_type == 'inner':
-        for row in first_file_list:
-            for elem in row:
-                try:
-                    result_writter.writerow(elem.split(',')[:3] + second_file_list[index] + elem.split(',')[3:])
-                except IndexError:
-                    result_writter.writerow(elem.split(',')[:3] + [","*(len(second_file_list[0][0].split(','))-1)] + elem.split(',')[3:])
-                index += 1
+
+    #if join_type == 'inner':
+
+
+
+
