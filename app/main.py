@@ -12,7 +12,7 @@ join_type = user_input_decision_list[4].lower()
 """
 first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
-join_type = "inner"
+join_type = "right"
 column_name = 'lastname'
 
 
@@ -29,7 +29,7 @@ with open(second_file_path, newline='') as csv_file:
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
                                 quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-    if len(ffile_list) >= len(sfile_list):
+    if len(ffile_list) <= len(sfile_list):
         first_file_list = sfile_list
         second_file_list = ffile_list
     else:
@@ -43,18 +43,27 @@ with open(result_file_path, 'w', newline='') as csvfile:
     # LEFT
     if join_type == 'left':
         for row in first_file_list:
-            result_writter.writerow(row + second_file_list[index])
+            try:
+                result_writter.writerow(row + second_file_list[index])
+            except IndexError:
+                result_writter.writerow(row + [","*(len(second_file_list[0][0].split(','))-1)])
             index += 1
 
     # RIGHT
     if join_type == 'right':
         for row in first_file_list:
-            result_writter.writerow(second_file_list[index] + row)
+            try:
+                result_writter.writerow(second_file_list[index] + row)
+            except IndexError:
+                result_writter.writerow([","*(len(second_file_list[0][0].split(','))-1)] + row)
             index += 1
 
     # INNER
     if join_type == 'inner':
         for row in first_file_list:
             for elem in row:
-                result_writter.writerow(elem.split(',')[:3] + second_file_list[index] + elem.split(',')[3:])
+                try:
+                    result_writter.writerow(elem.split(',')[:3] + second_file_list[index] + elem.split(',')[3:])
+                except IndexError:
+                    result_writter.writerow(elem.split(',')[:3] + [","*(len(second_file_list[0][0].split(','))-1)] + elem.split(',')[3:])
                 index += 1
