@@ -83,8 +83,17 @@ def print_by_column(column_list, list_of_valid_headers):
         index += 1
     return result
 
+def check_headers(ffile_header, sfile_header):
+    result = []
+    #SAME HEADERS
+    for n in ffile_header:
+        for m in sfile_header:
+            if n == m:
+                result.append(n)
+    return result
 
 print(print_by_column(ffile_column_list, ['lastname']))
+print(check_headers(ffile_header,sfile_header))
 
 # LEFT
 if join_type == 'left':
