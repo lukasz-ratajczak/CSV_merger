@@ -41,29 +41,50 @@ with open(result_file_path, 'w', newline='') as csvfile:
 
     # TODO możliwe że usuwanie kolumny w left i right nie bęzie potrzebne. Wtedy usunać
     # TODO zrobić zbieranie kolumn zamiast wierszy. Będzie łatwiej je wyświetlać wtedy
-    res = []
 
-    for n in ffile_list:
+    temp = []
+    ffile_column_list = []
+    for n in range(0, len(ffile_header)):
         for row in ffile_list:
-            res.append(row[0].split(',')[index])
+            temp.append(row[0].split(',')[index])
         index += 1
-        result.append(res)
-        res = []
+        ffile_column_list.append(temp)
+        temp = []
         if index > 3:
             index = 0
 
-    res = []
-
-    for n in sfile_list:
-        for row in ffile_list:
-            res.append(row[0].split(',')[index])
+    temp = []
+    sfile_column_list = []
+    for n in range(len(sfile_header)):
+        for row in sfile_list:
+            temp.append(row[0].split(',')[index])
         index += 1
-        result.append(res)
-        res = []
+        sfile_column_list.append(temp)
+        temp = []
         if index > 3:
             index = 0
 
-print(result)
+#print(ffile_column_list)
+#print(sfile_column_list)
+
+def print_by_column(column_list, list_of_valid_headers):
+    index = 0
+    result = [[]]
+    for column in column_list:
+        for elem in column:
+            if elem in list_of_valid_headers:
+                break
+            else:
+                result[index].append(elem)
+        if result[-1] == []:
+            continue
+        else:
+            result.append([])
+        index += 1
+    return result
+
+
+print(print_by_column(ffile_column_list, ['lastname']))
 
 # LEFT
 if join_type == 'left':
