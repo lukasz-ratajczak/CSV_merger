@@ -39,61 +39,75 @@ with open(result_file_path, 'w', newline='') as csvfile:
     ffile_header = ffile_list[0][0].split(',')
     sfile_header = sfile_list[0][0].split(',')
 
-    # TODO możliwe że usuwanie kolumny w left i right nie bęzie potrzebne. Wtedy usunać
-    # TODO zrobić zbieranie kolumn zamiast wierszy. Będzie łatwiej je wyświetlać wtedy
 
-    temp = []
-    ffile_column_list = []
-    for n in range(0, len(ffile_header)):
-        for row in ffile_list:
-            temp.append(row[0].split(',')[index])
-        index += 1
-        ffile_column_list.append(temp)
+    def list_by_column(file_list, file_header):
         temp = []
-        if index > 3:
-            index = 0
+        column_list = []
+        index = 0
+        for n in range(0, len(file_header)):
+            for row in file_list:
+                temp.append(row[0].split(',')[index])
+            index += 1
+            column_list.append(temp)
+            temp = []
+            if index > 3:
+                index = 0
+        return column_list
 
-    temp = []
-    sfile_column_list = []
-    for n in range(len(sfile_header)):
-        for row in sfile_list:
-            temp.append(row[0].split(',')[index])
-        index += 1
-        sfile_column_list.append(temp)
-        temp = []
-        if index > 3:
-            index = 0
 
-#print(ffile_column_list)
-#print(sfile_column_list)
-
-def print_by_column(column_list, list_of_valid_headers):
-    index = 0
-    result = [[]]
-    for column in column_list:
-        for elem in column:
-            if elem in list_of_valid_headers:
-                break
+    def print_by_column(column_list, list_of_valid_headers):
+        index = 0
+        result = [[]]
+        for column in column_list:
+            for elem in column:
+                if elem in list_of_valid_headers:
+                    break
+                else:
+                    result[index].append(elem)
+            if result[-1] == []:
+                continue
             else:
-                result[index].append(elem)
-        if result[-1] == []:
-            continue
-        else:
-            result.append([])
-        index += 1
-    return result
+                result.append([])
+            index += 1
+        return result
 
-def check_headers(ffile_header, sfile_header):
-    result = []
-    #SAME HEADERS
-    for n in ffile_header:
-        for m in sfile_header:
-            if n == m:
-                result.append(n)
-    return result
 
-print(print_by_column(ffile_column_list, ['lastname']))
-print(check_headers(ffile_header,sfile_header))
+    def check_headers(ffile_header, sfile_header):
+        result = []
+        # SAME HEADERS
+        for n in ffile_header:
+            for m in sfile_header:
+                if n == m:
+                    result.append(n)
+        return result
+
+
+    def print_to_rows(fcolumn_list, scolumn_list):
+        temp = ''
+        result = []
+        print(len(fcolumn_list))
+
+        print(f"{fcolumn_list[1][0]}")
+
+        for n in range(0,10):
+            for m in range(0,len(fcolumn_list)-1):
+                temp+=(f"{fcolumn_list[m][n]},")
+
+            result.append(temp)
+            temp = ''
+
+
+
+
+
+        return result
+
+print(print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
+                    print_by_column(list_by_column(sfile_list, sfile_header), [])))
+# print(list_by_column(ffile_list, ffile_header))
+# print(print_by_column(list_by_column(ffile_list, ffile_header), ['lastname']))
+# print(print_by_column(list_by_column(sfile_list, sfile_header), ['lastname']))
+# print(check_headers(ffile_header, sfile_header))
 
 # LEFT
 if join_type == 'left':
@@ -170,4 +184,4 @@ if join_type == 'inner':
                 check += 1
             if check > 0:
                 same_headers.append(elem_f)
-    print(list(set(same_headers)))
+    # print(list(set(same_headers)))
