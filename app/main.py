@@ -12,7 +12,7 @@ join_type = user_input_decision_list[4].lower()
 """
 first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
-join_type = "left"
+join_type = "right"
 column_name = 'id'
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
@@ -100,7 +100,7 @@ with open(result_file_path, 'w', newline='') as csvfile:
             try:
                 result[index] = result[index] + temp
             except IndexError:
-                result.append(","*(len(fcolumn_list)-1)+temp)
+                result.append("," * (len(fcolumn_list) - 1) + temp)
             index += 1
             temp = ''
 
@@ -108,19 +108,17 @@ with open(result_file_path, 'w', newline='') as csvfile:
             for i in range(len(result)):
 
                 if len(result[i].split(',')) != len(result[0].split(',')):
-                    result[i] = result[i] + ","*(len(scolumn_list)-2)
+                    result[i] = result[i] + "," * (len(scolumn_list) - 2)
         return result
 
 
-
-
-    #test = print_to_rows(print_by_column(list_by_column(sfile_list, sfile_header), []),
+    # test = print_to_rows(print_by_column(list_by_column(sfile_list, sfile_header), []),
     #                      print_by_column(list_by_column(ffile_list, ffile_header), []))
-    #test = print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
+    # test = print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
     #                    print_by_column(list_by_column(sfile_list, sfile_header), []))
-    #for row in test:
+    # for row in test:
     #    result_writter.writerow([row])
-# LEFT
+    # LEFT
     if join_type == 'left':
         result = []
         index = 0
@@ -129,7 +127,7 @@ with open(result_file_path, 'w', newline='') as csvfile:
                 ffile_column_index = index
                 break
             index += 1
-        index=0
+        index = 0
         for elem in sfile_list[0][0].split(','):
             if elem == column_name:
                 sfile_column_index = index
@@ -138,38 +136,42 @@ with open(result_file_path, 'w', newline='') as csvfile:
 
         for elem in ffile_list:
             result.append(elem)
-        result[0][0] = result[0][0]+','+",".join(sfile_header)
+        result[0][0] = result[0][0] + ',' + ",".join(sfile_header)
         index = 1
         for i in range(1, len(ffile_list)):
-            for j in range(1, len(sfile_list)-1):
-                if result[0][0].split(',')[ffile_column_index] == sfile_list[0][0].split(',')[sfile_column_index]:
+            for j in range(1, len(sfile_list) - 1):
+                if result[i][0].split(',')[ffile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
                     try:
-                        result[index][0] = result[index][0] +','+ sfile_list[index][0]
-                        print(result[index])
+                        result[index][0] = result[index][0] + ',' + sfile_list[index][0]
                     except IndexError:
                         result[index][0] = result[index][0] + ',' * (len(sfile_list[0][0].split(',')))
-                        print(result[index])
                     finally:
                         break
+            index += 1
+
+        index = 0
+        temp = result[0]
+        for row in result:
+            if len(row[0].split(',')) != len(temp[0].split(',')):
+                result[index][0] = result[index][0] + "," * (len(sfile_list[0][0].split(',')))
             index += 1
 
         for row in result:
             result_writter.writerow(row)
 
-
-# RIGHT
+    # RIGHT
     if join_type == 'right':
         result = []
-        index = 0
-        for elem in ffile_list[0][0].split(','):
-            if elem == column_name:
-                ffile_column_index = index
-                break
-            index += 1
         index = 0
         for elem in sfile_list[0][0].split(','):
             if elem == column_name:
                 sfile_column_index = index
+                break
+            index += 1
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
                 break
             index += 1
 
@@ -179,7 +181,10 @@ with open(result_file_path, 'w', newline='') as csvfile:
         index = 1
         for i in range(1, len(sfile_list)):
             for j in range(1, len(ffile_list) - 1):
-                if result[0][0].split(',')[ffile_column_index] == ffile_list[0][0].split(',')[sfile_column_index]:
+                #if f'{j}' not in list_by_column(sfile_list, sfile_header)[sfile_column_index]:
+                 #   continue
+                #print(f"{result[i][0].split(',')[sfile_column_index]} == {ffile_list[j][0].split(',')[ffile_column_index]}")
+                if result[i][0].split(',')[sfile_column_index] == ffile_list[j][0].split(',')[ffile_column_index]:
                     try:
                         result[index][0] = result[index][0] + ',' + ffile_list[index][0]
                         print(result[index])
@@ -188,6 +193,13 @@ with open(result_file_path, 'w', newline='') as csvfile:
                         print(result[index])
                     finally:
                         break
+            index += 1
+
+        index = 0
+        temp = result[0]
+        for row in result:
+            if len(row[0].split(',')) != len(temp[0].split(',')):
+                result[index][0] = result[index][0] + "," * (len(ffile_list[0][0].split(',')))
             index += 1
 
         for row in result:

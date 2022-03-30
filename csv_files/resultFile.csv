@@ -1,11 +1,7 @@
- id,firstname,lastname,email,id,country,city 
- 0,Madalyn,Zina,Madalyn.Zina@yopmail.com,0,Nauru,Port  Louis 
- 1,Mallory,Fosque,Mallory.Fosque@yopmail.com,1,Seychelles,Calgary 
- 2,Lexine,Giule,Lexine.Giule@yopmail.com,2,Cote  DIvoire,Melbourne 
- 3,Sabina,Raffo,Sabina.Raffo@yopmail.com,4,Hungary,London 
- 4,Randa,Avi,Randa.Avi@yopmail.com,5,Antarctica,Bratislava 
- 5,Ericka,Mendez,Ericka.Mendez@yopmail.com,6,Korea,Democratic  PeopleS  Republic  of  Stuttgart 
- 6,Tera,Lia,Tera.Lia@yopmail.com,,, 
- 7,Rosabelle,Bouchard,Rosabelle.Bouchard@yopmail.com,,, 
- 8,Damaris,Swanhildas,Damaris.Swanhildas@yopmail.com,,, 
- 9,Leeanne,Milde,Leeanne.Milde@yopmail.com,,, 
+ id,country,city,id,firstname,lastname,email 
+ 0,Nauru,Port  Louis,0,Madalyn,Zina,Madalyn.Zina@yopmail.com 
+ 1,Seychelles,Calgary,1,Mallory,Fosque,Mallory.Fosque@yopmail.com 
+ 2,Cote  DIvoire,Melbourne,2,Lexine,Giule,Lexine.Giule@yopmail.com 
+ 4,Hungary,London,3,Sabina,Raffo,Sabina.Raffo@yopmail.com 
+ 5,Antarctica,Bratislava,4,Randa,Avi,Randa.Avi@yopmail.com 
+ 6,Korea,Democratic  PeopleS  Republic  of  Stuttgart,5,Ericka,Mendez,Ericka.Mendez@yopmail.com 
