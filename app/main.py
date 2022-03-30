@@ -12,58 +12,254 @@ join_type = user_input_decision_list[4].lower()
 """
 first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
-join_type = "right"
-column_name = 'lastname'
-
+join_type = "inner"
+column_name = 'id'
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
 
 with open(first_file_path, newline='') as csv_file:
-    ffile_list = list(csv.reader(csv_file, delimiter=' ', quotechar='|'))
+    ffile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
 
 with open(second_file_path, newline='') as csv_file:
-    sfile_list = list(csv.reader(csv_file, delimiter=' ', quotechar='|'))
-
-
+    sfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
 
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
                                 quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-    if len(ffile_list) <= len(sfile_list):
-        first_file_list = sfile_list
-        second_file_list = ffile_list
-    else:
+    """if len(ffile_list) >= len(sfile_list):
         first_file_list = ffile_list
         second_file_list = sfile_list
+    else:
+        first_file_list = sfile_list
+        second_file_list = ffile_list"""
 
     index = 0
     result = []
 
+    ffile_header = ffile_list[0][0].split(',')
+    sfile_header = sfile_list[0][0].split(',')
 
+
+    def list_by_column(file_list, file_header):
+        temp = []
+        column_list = []
+        index = 0
+        for n in range(0, len(file_header)):
+            for row in file_list:
+                temp.append(row[0].split(',')[index])
+            index += 1
+            column_list.append(temp)
+            temp = []
+            if index > 3:
+                index = 0
+        return column_list
+
+
+    def print_by_column(column_list, list_of_valid_headers):
+        index = 0
+        result = [[]]
+        for column in column_list:
+            for elem in column:
+                if elem in list_of_valid_headers:
+                    break
+                else:
+                    result[index].append(elem)
+            if result[-1] == []:
+                continue
+            else:
+                result.append([])
+            index += 1
+        return result
+
+
+    def check_headers(ffile_header, sfile_header):
+        result = []
+        # SAME HEADERS
+        for n in ffile_header:
+            for m in sfile_header:
+                if n == m:
+                    result.append(n)
+        return result
+
+
+    def print_to_rows(fcolumn_list, scolumn_list):
+        temp = ''
+        result = []
+        index = 0
+
+        for n in range(0, len(fcolumn_list[0]) - 1):
+            for m in range(0, len(fcolumn_list) - 1):
+                temp += (f"{fcolumn_list[m][n]},")
+            result.append(temp)
+            temp = ''
+        temp = ''
+        for n in range(0, len(scolumn_list[0]) - 1):
+            for m in range(0, len(scolumn_list) - 1):
+                temp += (f"{scolumn_list[m][n]},")
+            temp = temp[:-1]
+            try:
+                result[index] = result[index] + temp
+            except IndexError:
+                result.append("," * (len(fcolumn_list) - 1) + temp)
+            index += 1
+            temp = ''
+
+        if len(result[0].split(',')) != len(result[-1].split(',')):
+            for i in range(len(result)):
+
+                if len(result[i].split(',')) != len(result[0].split(',')):
+                    result[i] = result[i] + "," * (len(scolumn_list) - 2)
+        return result
+
+
+    # test = print_to_rows(print_by_column(list_by_column(sfile_list, sfile_header), []),
+    #                      print_by_column(list_by_column(ffile_list, ffile_header), []))
+    # test = print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
+    #                    print_by_column(list_by_column(sfile_list, sfile_header), []))
+    # for row in test:
+    #    result_writter.writerow([row])
     # LEFT
     if join_type == 'left':
-        for row in first_file_list:
-            try:
-                result_writter.writerow(row + second_file_list[index])
-            except IndexError:
-                result_writter.writerow(row + [","*(len(second_file_list[0][0].split(','))-1)])
+        result = []
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
+                break
             index += 1
+        index = 0
+        for elem in sfile_list[0][0].split(','):
+            if elem == column_name:
+                sfile_column_index = index
+                break
+            index += 1
+
+        for elem in ffile_list:
+            result.append(elem)
+        result[0][0] = result[0][0] + ',' + ",".join(sfile_header)
+        index = 1
+        for i in range(1, len(ffile_list)):
+            for j in range(1, len(sfile_list)):
+                if result[i][0].split(',')[ffile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
+                    try:
+                        result[index][0] = result[index][0] + ',' + sfile_list[j][0]
+                    except IndexError:
+                        result[index][0] = result[index][0] + ',' * (len(sfile_list[0][0].split(',')))
+                    finally:
+                        break
+            index += 1
+
+        index = 0
+        temp = result[0]
+        for row in result:
+            if len(row[0].split(',')) != len(temp[0].split(',')):
+                result[index][0] = result[index][0] + "," * (len(sfile_list[0][0].split(',')))
+            index += 1
+
+        for row in result:
+            result_writter.writerow(row)
 
     # RIGHT
     if join_type == 'right':
-        for row in first_file_list:
-            try:
-                result_writter.writerow(second_file_list[index] + row)
-            except IndexError:
-                result_writter.writerow([","*(len(second_file_list[0][0].split(','))-1)] + row)
+        result = []
+        index = 0
+        for elem in sfile_list[0][0].split(','):
+            if elem == column_name:
+                sfile_column_index = index
+                break
+            index += 1
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
+                break
             index += 1
 
-    # INNER
+        for elem in sfile_list:
+            result.append(elem)
+        result[0][0] = result[0][0] + ',' + ",".join(ffile_header)
+        index = 1
+        for i in range(1, len(sfile_list)):
+            for j in range(1, len(ffile_list)):
+
+                if result[i][0].split(',')[sfile_column_index] == ffile_list[j][0].split(',')[ffile_column_index]:
+                    try:
+                        result[index][0] = result[index][0] + ',' + ffile_list[j][0]
+                    except IndexError:
+                        result[index][0] = result[index][0] + ',' * (len(ffile_list[0][0].split(',')))
+                    finally:
+                        break
+            index += 1
+
+        index = 0
+        temp = result[0]
+        for row in result:
+            if len(row[0].split(',')) != len(temp[0].split(',')):
+                result[index][0] = result[index][0] + "," * (len(ffile_list[0][0].split(',')))
+            index += 1
+
+        for row in result:
+            result_writter.writerow(row)
+
+# INNER
+
     if join_type == 'inner':
-        for row in first_file_list:
-            for elem in row:
-                try:
-                    result_writter.writerow(elem.split(',')[:3] + second_file_list[index] + elem.split(',')[3:])
-                except IndexError:
-                    result_writter.writerow(elem.split(',')[:3] + [","*(len(second_file_list[0][0].split(','))-1)] + elem.split(',')[3:])
-                index += 1
+        result = [[""]]
+        index = 0
+        for elem in sfile_list[0][0].split(','):
+            if elem == column_name:
+                sfile_column_index = index
+                break
+            index += 1
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
+                break
+            index += 1
+        result[0][0] = ",".join(ffile_header) + ',' + ",".join(sfile_header)
+        for i in range(1, len(ffile_list)):
+            for j in range(1, len(sfile_list)):
+
+                if ffile_list[i][0].split(',')[sfile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
+                    try:
+                        result.append([ffile_list[i][0] + ',' + sfile_list[j][0]])
+                    except IndexError:
+                        continue
+                    finally:
+                        break
+            index += 1
+
+        for row in result:
+            result_writter.writerow(row)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

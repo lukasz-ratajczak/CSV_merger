@@ -126,3 +126,5 @@ dmypy.json
 .idea/
 
 csv_files/.~lock.resultFile.csv#
+
+csv_files/resultFile.csv
