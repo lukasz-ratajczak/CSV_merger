@@ -12,7 +12,7 @@ join_type = user_input_decision_list[4].lower()
 """
 first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
-join_type = "right"
+join_type = "inner"
 column_name = 'id'
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
@@ -203,13 +203,63 @@ with open(result_file_path, 'w', newline='') as csvfile:
 
 # INNER
 
-if join_type == 'inner':
-    same_headers = []
-    for elem_f in ffile_header:
-        check = 0
-        for elem_s in sfile_header:
-            if elem_f == elem_s:
-                check += 1
-            if check > 0:
-                same_headers.append(elem_f)
-    # print(list(set(same_headers)))
+    if join_type == 'inner':
+        result = [[""]]
+        index = 0
+        for elem in sfile_list[0][0].split(','):
+            if elem == column_name:
+                sfile_column_index = index
+                break
+            index += 1
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
+                break
+            index += 1
+        result[0][0] = ",".join(ffile_header) + ',' + ",".join(sfile_header)
+        for i in range(1, len(ffile_list)):
+            for j in range(1, len(sfile_list)):
+
+                if ffile_list[i][0].split(',')[sfile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
+                    try:
+                        result.append([ffile_list[i][0] + ',' + sfile_list[j][0]])
+                    except IndexError:
+                        continue
+                    finally:
+                        break
+            index += 1
+
+        for row in result:
+            result_writter.writerow(row)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
