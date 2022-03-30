@@ -25,7 +25,7 @@ with open(second_file_path, newline='') as csv_file:
 
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
-                                quotechar=',', quoting=csv.QUOTE_MINIMAL)
+                                quotechar=' ', quoting=csv.QUOTE_MINIMAL)
     """if len(ffile_list) >= len(sfile_list):
         first_file_list = ffile_list
         second_file_list = sfile_list
@@ -85,30 +85,41 @@ with open(result_file_path, 'w', newline='') as csvfile:
     def print_to_rows(fcolumn_list, scolumn_list):
         temp = ''
         result = []
-        print(len(fcolumn_list))
+        index = 0
 
-        print(f"{fcolumn_list[1][0]}")
-
-        for n in range(0,10):
-            for m in range(0,len(fcolumn_list)-1):
-                temp+=(f"{fcolumn_list[m][n]},")
-
+        for n in range(0, len(fcolumn_list[0]) - 1):
+            for m in range(0, len(fcolumn_list) - 1):
+                temp += (f"{fcolumn_list[m][n]},")
             result.append(temp)
             temp = ''
+        temp = ''
+        for n in range(0, len(scolumn_list[0]) - 1):
+            for m in range(0, len(scolumn_list) - 1):
+                temp += (f"{scolumn_list[m][n]},")
+            temp = temp[:-1]
+            try:
+                result[index] = result[index] + temp
+            except IndexError:
+                result.append(","*(len(fcolumn_list)-1)+temp)
+            index += 1
+            temp = ''
 
+        if len(result[0].split(',')) != len(result[-1].split(',')):
+            for i in range(len(result)):
 
-
-
-
+                if len(result[i].split(',')) != len(result[0].split(',')):
+                    result[i] = result[i] + ","*(len(scolumn_list)-2)
         return result
 
-print(print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
-                    print_by_column(list_by_column(sfile_list, sfile_header), [])))
-# print(list_by_column(ffile_list, ffile_header))
-# print(print_by_column(list_by_column(ffile_list, ffile_header), ['lastname']))
-# print(print_by_column(list_by_column(sfile_list, sfile_header), ['lastname']))
-# print(check_headers(ffile_header, sfile_header))
 
+
+
+    #test = print_to_rows(print_by_column(list_by_column(sfile_list, sfile_header), []),
+    #                      print_by_column(list_by_column(ffile_list, ffile_header), []))
+    #test = print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
+    #                    print_by_column(list_by_column(sfile_list, sfile_header), []))
+    for row in test:
+        result_writter.writerow([row])
 # LEFT
 if join_type == 'left':
 
