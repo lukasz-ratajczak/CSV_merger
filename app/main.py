@@ -139,10 +139,10 @@ with open(result_file_path, 'w', newline='') as csvfile:
         result[0][0] = result[0][0] + ',' + ",".join(sfile_header)
         index = 1
         for i in range(1, len(ffile_list)):
-            for j in range(1, len(sfile_list) - 1):
+            for j in range(1, len(sfile_list)):
                 if result[i][0].split(',')[ffile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
                     try:
-                        result[index][0] = result[index][0] + ',' + sfile_list[index][0]
+                        result[index][0] = result[index][0] + ',' + sfile_list[j][0]
                     except IndexError:
                         result[index][0] = result[index][0] + ',' * (len(sfile_list[0][0].split(',')))
                     finally:
@@ -180,17 +180,13 @@ with open(result_file_path, 'w', newline='') as csvfile:
         result[0][0] = result[0][0] + ',' + ",".join(ffile_header)
         index = 1
         for i in range(1, len(sfile_list)):
-            for j in range(1, len(ffile_list) - 1):
-                #if f'{j}' not in list_by_column(sfile_list, sfile_header)[sfile_column_index]:
-                 #   continue
-                #print(f"{result[i][0].split(',')[sfile_column_index]} == {ffile_list[j][0].split(',')[ffile_column_index]}")
+            for j in range(1, len(ffile_list)):
+
                 if result[i][0].split(',')[sfile_column_index] == ffile_list[j][0].split(',')[ffile_column_index]:
                     try:
-                        result[index][0] = result[index][0] + ',' + ffile_list[index][0]
-                        print(result[index])
+                        result[index][0] = result[index][0] + ',' + ffile_list[j][0]
                     except IndexError:
                         result[index][0] = result[index][0] + ',' * (len(ffile_list[0][0].split(',')))
-                        print(result[index])
                     finally:
                         break
             index += 1
