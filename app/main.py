@@ -12,7 +12,7 @@ join_type = user_input_decision_list[4].lower()
 """
 first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
-join_type = "inner"
+join_type = "left"
 column_name = 'id'
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
@@ -118,71 +118,80 @@ with open(result_file_path, 'w', newline='') as csvfile:
     #                      print_by_column(list_by_column(ffile_list, ffile_header), []))
     #test = print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
     #                    print_by_column(list_by_column(sfile_list, sfile_header), []))
-    for row in test:
-        result_writter.writerow([row])
+    #for row in test:
+    #    result_writter.writerow([row])
 # LEFT
-if join_type == 'left':
+    if join_type == 'left':
+        result = []
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
+                break
+            index += 1
+        index=0
+        for elem in sfile_list[0][0].split(','):
+            if elem == column_name:
+                sfile_column_index = index
+                break
+            index += 1
 
-    for row in ffile_list:
-        result.append([elem for elem in row[0].split(',')])
-    for row in sfile_list:
-        try:
-            result[index] += row[0].split(',')
-        except IndexError:
-            result.append([""] * len(ffile_list[0][0].split(',')) + row[0].split(','))
-        index += 1
+        for elem in ffile_list:
+            result.append(elem)
+        result[0][0] = result[0][0]+','+",".join(sfile_header)
+        index = 1
+        for i in range(1, len(ffile_list)):
+            for j in range(1, len(sfile_list)-1):
+                if result[0][0].split(',')[ffile_column_index] == sfile_list[0][0].split(',')[sfile_column_index]:
+                    try:
+                        result[index][0] = result[index][0] +','+ sfile_list[index][0]
+                        print(result[index])
+                    except IndexError:
+                        result[index][0] = result[index][0] + ',' * (len(sfile_list[0][0].split(',')))
+                        print(result[index])
+                    finally:
+                        break
+            index += 1
 
-    index = 0
-    for row in result[0]:
-        check = 0
-        for elem in result[0]:
-            if elem == row:
-                check += 1
-            if check > 1:
-                rmv_column = index
-        index += 1
+        for row in result:
+            result_writter.writerow(row)
 
-    index = 0
-    for row in result[::]:
-        try:
-            result[::][index].pop(rmv_column)
-        except IndexError:
-            break
-        index += 1
-
-    for row in result:
-        result_writter.writerow(row)
 
 # RIGHT
-if join_type == 'right':
-    for row in sfile_list:
-        result.append([elem for elem in row[0].split(',')])
-    for row in ffile_list:
-        try:
-            result[index] += row[0].split(',')
-        except IndexError:
-            result.append([""] * len(sfile_list[0][0].split(',')) + row[0].split(','))
-        index += 1
+    if join_type == 'right':
+        result = []
+        index = 0
+        for elem in ffile_list[0][0].split(','):
+            if elem == column_name:
+                ffile_column_index = index
+                break
+            index += 1
+        index = 0
+        for elem in sfile_list[0][0].split(','):
+            if elem == column_name:
+                sfile_column_index = index
+                break
+            index += 1
 
-    index = 0
-    for row in result[0]:
-        check = 0
-        for elem in result[0]:
-            if elem == row:
-                check += 1
-        if check > 1:
-            rmv_column = index
+        for elem in sfile_list:
+            result.append(elem)
+        result[0][0] = result[0][0] + ',' + ",".join(ffile_header)
+        index = 1
+        for i in range(1, len(sfile_list)):
+            for j in range(1, len(ffile_list) - 1):
+                if result[0][0].split(',')[ffile_column_index] == ffile_list[0][0].split(',')[sfile_column_index]:
+                    try:
+                        result[index][0] = result[index][0] + ',' + ffile_list[index][0]
+                        print(result[index])
+                    except IndexError:
+                        result[index][0] = result[index][0] + ',' * (len(ffile_list[0][0].split(',')))
+                        print(result[index])
+                    finally:
+                        break
+            index += 1
 
-    index = 0
-    for row in result[::]:
-        try:
-            result[::][index].pop(rmv_column)
-        except IndexError:
-            break
-        index += 1
-
-    for row in result:
-        result_writter.writerow(row)
+        for row in result:
+            result_writter.writerow(row)
 
 # INNER
 
