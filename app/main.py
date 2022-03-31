@@ -1,19 +1,57 @@
 import csv
 
-"""
-user_input = input("Use command: 'join file_path file_path column_name join_type'")
+print(
+    "___________________________________________________________\n" +
+    "   _____  _______      __  __  __                          \n" +
+    "  / ____|/ ____\ \    / / |  \/  |                         \n" +
+    " | |    | (___  \ \  / /  | \  / | ___ _ __ __ _  ___ _ __ \n" +
+    " | |     \___ \  \ \/ /   | |\/| |/ _ \ '__/ _` |/ _ \ '__|\n" +
+    " | |____ ____) |  \  /    | |  | |  __/ | | (_| |  __/ |   \n" +
+    "  \_____|_____/    \/     |_|  |_|\___|_|  \__, |\___|_|   \n" +
+    "                                            __/ |          \n" +
+    "                                           |___/           \n" +
+    "___________________________________________________________\n")
+print("Welcome to CSV Merger!")
+print("---------------------")
+print("If no or wrong input is entered, default path are set to example files, column name is 'id' and join type is 'left")
+print("---------------------")
+while True:
+    user_input = input("Use command: 'join file_path file_path column_name join_type': ")
+    user_input_decision_list = user_input.split()
+    try:
+        if user_input_decision_list[0] != 'join':
+            print("Wrong command. Use 'join' to merge CSV files")
+            print("---------------------")
+        else:
+            break
+    except IndexError:
+        print("Empty command. Use 'join' to merge CSV files")
+        print("---------------------")
 
-user_input_decision_list = user_input.split()
 
-first_file_path = user_input_decision_list[1]
-second_file_path = user_input_decision_list[2]
-column_name = user_input_decision_list[3].lower()
-join_type = user_input_decision_list[4].lower()
-"""
-first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
-second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
-join_type = "inner"
-column_name = 'id'
+try:
+    if type(user_input_decision_list[1].lower()) == str:
+        first_file_path = user_input_decision_list[1].lower()
+except IndexError:
+    first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
+
+try:
+    if type(user_input_decision_list[2].lower()) == str:
+        second_file_path = user_input_decision_list[2].lower()
+except IndexError:
+    second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
+
+try:
+    if type(user_input_decision_list[3].lower()) == str:
+        column_name = user_input_decision_list[3].lower()
+except IndexError:
+    column_name = 'id'
+
+try:
+    if type(user_input_decision_list[4].lower()) == str:
+        join_type = user_input_decision_list[4].lower()
+except IndexError:
+    join_type = 'left'
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
 
@@ -201,7 +239,7 @@ with open(result_file_path, 'w', newline='') as csvfile:
         for row in result:
             result_writter.writerow(row)
 
-# INNER
+    # INNER
 
     if join_type == 'inner':
         result = [[""]]
@@ -233,33 +271,12 @@ with open(result_file_path, 'w', newline='') as csvfile:
         for row in result:
             result_writter.writerow(row)
 
+with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', newline='') as csv_file:
+    rfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
 
+    print("--------------------------")
+    for row in rfile_list:
+        print(row[0])
+    print("--------------------------")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+input("Press to Exit")
