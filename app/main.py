@@ -36,7 +36,6 @@ while True:
         if user_input_decision_list[0] != 'join':
             print("Wrong command. Use 'join' to merge CSV files")
             print("---------------------")
-            check += 1
     except IndexError:
         print("Empty command. Use 'join' to merge CSV files")
         print("---------------------")
@@ -54,15 +53,25 @@ while True:
     except IndexError:
         second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
     try:
-        with open(first_file_path, newline='') as csv_file:
-            ffile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+        with open(first_file_path) as file:
+            ffile_list = file.readlines()
+            for i in range(0, len(ffile_list)):
+                if i <= len(ffile_list) - 2:
+                    ffile_list[i] = [ffile_list[i][:-1]]
+                else:
+                    ffile_list[i] = [ffile_list[i]]
             ffile_header = ffile_list[0][0].split(',')
     except FileNotFoundError:
         print("Wrong file1 path")
 
     try:
-        with open(second_file_path, newline='') as csv_file:
-            sfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+        with open(second_file_path) as file:
+            sfile_list = file.readlines()
+            for i in range(0, len(sfile_list)):
+                if i <= len(sfile_list) - 2:
+                    sfile_list[i] = [sfile_list[i][:-1]]
+                else:
+                    sfile_list[i] = [sfile_list[i]]
             sfile_header = sfile_list[0][0].split(',')
     except FileNotFoundError:
         print("Wrong file2 path")
@@ -87,10 +96,13 @@ while True:
             join_type = 'left'
             check += 1
 
-    break
+    if check >=1:
+        break
 
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
+
+#TODO writer bez csv
 
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
@@ -206,8 +218,12 @@ with open(result_file_path, 'w', newline='') as csvfile:
                 result[index][0] = result[index][0] + "," * (len(sfile_list[0][0].split(',')))
             index += 1
 
-        for row in result:
-            result_writter.writerow(row)
+        with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
+
+            for row in result:
+                for i in range(0, len(result[0])):
+                    file.write(str(row[i]))
+                file.write('\n')
 
     # RIGHT
     if join_type == 'right':
@@ -248,8 +264,12 @@ with open(result_file_path, 'w', newline='') as csvfile:
                 result[index][0] = result[index][0] + "," * (len(ffile_list[0][0].split(',')))
             index += 1
 
-        for row in result:
-            result_writter.writerow(row)
+        with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
+
+            for row in result:
+                for i in range(0, len(result[0])):
+                    file.write(str(row[i]))
+                file.write('\n')
 
     # INNER
 
@@ -280,11 +300,22 @@ with open(result_file_path, 'w', newline='') as csvfile:
                         break
             index += 1
 
-        for row in result:
-            result_writter.writerow(row)
+        with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
 
-with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', newline='') as csv_file:
-    rfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+            for row in result:
+                for i in range(0, len(result[0])):
+                    file.write(str(row[i]))
+                file.write('\n')
+
+
+with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv') as file:
+    rfile_list = file.readlines()
+    for i in range(0, len(rfile_list)):
+        if i <= len(rfile_list) - 2:
+            rfile_list[i] = [rfile_list[i][:-1]]
+        else:
+            rfile_list[i] = [rfile_list[i]]
+    rfile_header = rfile_list[0][0].split(',')
 
     print("--------------------------")
     for row in rfile_list:
