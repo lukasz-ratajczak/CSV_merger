@@ -3,6 +3,16 @@ import csv
 #DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\myFile0.csv C:\Coder\cvs_merger\csv_files\myFile1.csv id left
 #DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\file0.csv C:\Coder\cvs_merger\csv_files\file1.csv id left
 
+def check_headers(ffile_header, sfile_header):
+    result = []
+    # SAME HEADERS
+    for n in ffile_header:
+        for m in sfile_header:
+            if n == m:
+                result.append(n)
+    return result
+
+
 print(
     "___________________________________________________________\n" +
     "   _____  _______      __  __  __                          \n" +
@@ -19,55 +29,68 @@ print("---------------------")
 print("If no or wrong input is entered, default path are set to example files, column name is 'id' and join type is 'left")
 print("---------------------")
 while True:
+    check = 0
     user_input = input("Use command: 'join file_path file_path column_name join_type': ")
     user_input_decision_list = user_input.split()
     try:
         if user_input_decision_list[0] != 'join':
             print("Wrong command. Use 'join' to merge CSV files")
             print("---------------------")
-        else:
-            break
+            check += 1
     except IndexError:
         print("Empty command. Use 'join' to merge CSV files")
         print("---------------------")
 
 
-try:
-    if type(user_input_decision_list[1].lower()) == str:
-        first_file_path = user_input_decision_list[1].lower()
-except IndexError:
-    first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
+    try:
+        if type(user_input_decision_list[1].lower()) == str:
+            first_file_path = user_input_decision_list[1].lower()
+    except IndexError:
+        first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 
-try:
-    if type(user_input_decision_list[2].lower()) == str:
-        second_file_path = user_input_decision_list[2].lower()
-except IndexError:
-    second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
+    try:
+        if type(user_input_decision_list[2].lower()) == str:
+            second_file_path = user_input_decision_list[2].lower()
+    except IndexError:
+        second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
+    try:
+        with open(first_file_path, newline='') as csv_file:
+            ffile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+            ffile_header = ffile_list[0][0].split(',')
+    except FileNotFoundError:
+        print("Wrong file1 path")
 
-try:
-    if type(user_input_decision_list[3].lower()) == str:
-        column_name = user_input_decision_list[3].lower()
-except IndexError:
-    column_name = 'id'
+    try:
+        with open(second_file_path, newline='') as csv_file:
+            sfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+            sfile_header = sfile_list[0][0].split(',')
+    except FileNotFoundError:
+        print("Wrong file2 path")
 
-try:
-    if type(user_input_decision_list[4].lower()) == str:
-        join_type = user_input_decision_list[4].lower()
-except IndexError:
-    join_type = 'left'
+    try:
+        if type(user_input_decision_list[3].lower()) == str and len(check_headers(ffile_header,sfile_header)) >= 1:
+            column_name = user_input_decision_list[3].lower()
+            check += 1
+    except IndexError:
+        column_name = 'id'
+        check += 1
+    except NameError:
+        continue
 
-#TODO walidacja nazw plikow - while true ?
-#TODO defaultowa wartosc jesli zla wartosc kolumny czy join'a
+    try:
+        if type(user_input_decision_list[4].lower()) == str and user_input_decision_list[4].lower() in ['left','right','inner']:
+            join_type = user_input_decision_list[4].lower()
+        else:
+            join_type = 'left'
+        check += 1
+    except IndexError:
+            join_type = 'left'
+            check += 1
+
+    break
+
 
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
-
-with open(first_file_path, newline='') as csv_file:
-    ffile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
-    ffile_header = ffile_list[0][0].split(',')
-
-with open(second_file_path, newline='') as csv_file:
-    sfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
-    sfile_header = sfile_list[0][0].split(',')
 
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
@@ -108,14 +131,7 @@ with open(result_file_path, 'w', newline='') as csvfile:
         return result
 
 
-    def check_headers(ffile_header, sfile_header):
-        result = []
-        # SAME HEADERS
-        for n in ffile_header:
-            for m in sfile_header:
-                if n == m:
-                    result.append(n)
-        return result
+
 
 
     def print_to_rows(fcolumn_list, scolumn_list):
@@ -148,12 +164,6 @@ with open(result_file_path, 'w', newline='') as csvfile:
         return result
 
 
-    # test = print_to_rows(print_by_column(list_by_column(sfile_list, sfile_header), []),
-    #                      print_by_column(list_by_column(ffile_list, ffile_header), []))
-    # test = print_to_rows(print_by_column(list_by_column(ffile_list, ffile_header), []),
-    #                    print_by_column(list_by_column(sfile_list, sfile_header), []))
-    # for row in test:
-    #    result_writter.writerow([row])
     # LEFT
     if join_type == 'left':
         result = []
@@ -162,6 +172,8 @@ with open(result_file_path, 'w', newline='') as csvfile:
             if elem == column_name:
                 ffile_column_index = index
                 break
+            else:
+                ffile_column_index = -1
             index += 1
         index = 0
         for elem in sfile_list[0][0].split(','):
