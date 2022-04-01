@@ -1,5 +1,8 @@
 import csv
 
+#DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\myFile0.csv C:\Coder\cvs_merger\csv_files\myFile1.csv id left
+#DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\file0.csv C:\Coder\cvs_merger\csv_files\file1.csv id left
+
 print(
     "___________________________________________________________\n" +
     "   _____  _______      __  __  __                          \n" +
@@ -53,30 +56,25 @@ try:
 except IndexError:
     join_type = 'left'
 
+#TODO walidacja nazw plikow - while true ?
+#TODO defaultowa wartosc jesli zla wartosc kolumny czy join'a
+
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
 
 with open(first_file_path, newline='') as csv_file:
     ffile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+    ffile_header = ffile_list[0][0].split(',')
 
 with open(second_file_path, newline='') as csv_file:
     sfile_list = list(csv.reader(csv_file, delimiter='_', quotechar='|'))
+    sfile_header = sfile_list[0][0].split(',')
 
 with open(result_file_path, 'w', newline='') as csvfile:
     result_writter = csv.writer(csvfile, delimiter=',',
                                 quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-    """if len(ffile_list) >= len(sfile_list):
-        first_file_list = ffile_list
-        second_file_list = sfile_list
-    else:
-        first_file_list = sfile_list
-        second_file_list = ffile_list"""
 
     index = 0
     result = []
-
-    ffile_header = ffile_list[0][0].split(',')
-    sfile_header = sfile_list[0][0].split(',')
-
 
     def list_by_column(file_list, file_header):
         temp = []
@@ -170,6 +168,8 @@ with open(result_file_path, 'w', newline='') as csvfile:
             if elem == column_name:
                 sfile_column_index = index
                 break
+            else:
+                sfile_column_index = -1
             index += 1
 
         for elem in ffile_list:
