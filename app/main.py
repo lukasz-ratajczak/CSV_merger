@@ -327,11 +327,15 @@ if join_type == 'inner':
         index += 1
 
 # Saves result to files
-with open(result_file_path, 'w') as file:
-    for row in result:
-        for i in range(0, len(result[0])):
-            file.write(str(row[i]))
-        file.write('\n')
+try:
+    with open(result_file_path, 'w') as file:
+        for row in result:
+            for i in range(0, len(result[0])):
+                file.write(str(row[i]))
+            file.write('\n')
+except MemoryError:
+    print("Out of memory! Use smaller samples!")
+    print("-----------")
 
 # Print result for user
 with open(result_file_path) as file:
