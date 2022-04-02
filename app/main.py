@@ -1,6 +1,7 @@
 # DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\myFile0.csv C:\Coder\cvs_merger\csv_files\myFile1.csv id left
 # DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\file0.csv C:\Coder\cvs_merger\csv_files\file1.csv id left
 
+# Method that returns same header columns in both files
 def check_headers(ffile_header, sfile_header):
     result = []
     # SAME HEADERS
@@ -10,7 +11,7 @@ def check_headers(ffile_header, sfile_header):
                 result.append(n)
     return result
 
-
+# Method to make a list of each column with header and values
 def list_by_column(file_list, file_header):
     temp = []
     column_list = []
@@ -25,7 +26,7 @@ def list_by_column(file_list, file_header):
             index = 0
     return column_list
 
-
+# Method to print by column. OBSOLETE
 def print_by_column(column_list, list_of_valid_headers):
     index = 0
     result = [[]]
@@ -42,7 +43,7 @@ def print_by_column(column_list, list_of_valid_headers):
         index += 1
     return result
 
-
+# Method to print columns to rows. OBSOLETE
 def print_to_rows(fcolumn_list, scolumn_list):
     temp = ''
     result = []
@@ -72,7 +73,7 @@ def print_to_rows(fcolumn_list, scolumn_list):
                 result[i] = result[i] + "," * (len(scolumn_list) - 2)
     return result
 
-
+# Print startup
 print(
     "___________________________________________________________\n" +
     "   _____  _______      __  __  __                          \n" +
@@ -89,10 +90,17 @@ print("---------------------")
 print(
     "If no or wrong input is entered, default path are set to example files, column name is 'id' and join type is 'left")
 print("---------------------")
+
+# loop for user to input correct data
 while True:
+    # check - ends loop after all of criteria is met
     check = 0
+
+    # User enter values to app. It's splited for checking all one by one
     user_input = input("Use command: 'join file_path file_path column_name join_type': ")
     user_input_decision_list = user_input.split()
+
+    # check if command is valid
     try:
         if user_input_decision_list[0] != 'join':
             print("Wrong command. Use 'join' to merge CSV files")
@@ -101,17 +109,21 @@ while True:
         print("Empty command. Use 'join' to merge CSV files")
         print("---------------------")
 
+    # check first file path entered. default set to existing file
     try:
         if type(user_input_decision_list[1].lower()) == str:
             first_file_path = user_input_decision_list[1].lower()
     except IndexError:
         first_file_path = 'C:\Coder\cvs_merger\csv_files\myFile0.csv'
 
+    # check second file path entered. default set to existing file
     try:
         if type(user_input_decision_list[2].lower()) == str:
             second_file_path = user_input_decision_list[2].lower()
     except IndexError:
         second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
+
+    # opens first file and set it to LIST of LISTS of STRINGS. if no file founded, return to beginning
     try:
         with open(first_file_path) as file:
             ffile_list = file.readlines()
@@ -124,6 +136,7 @@ while True:
     except FileNotFoundError:
         print("Wrong file1 path")
 
+    # opens second file and set it to LIST of LISTS of STRINGS. if no file founded, return to input
     try:
         with open(second_file_path) as file:
             sfile_list = file.readlines()
@@ -136,6 +149,7 @@ while True:
     except FileNotFoundError:
         print("Wrong file2 path")
 
+    # sets column name if headers present in both of files. default for empty command, return to input if there is no matching ones
     try:
         if type(user_input_decision_list[3].lower()) == str and len(check_headers(ffile_header, sfile_header)) >= 1:
             column_name = user_input_decision_list[3].lower()
@@ -146,6 +160,7 @@ while True:
     except NameError:
         continue
 
+    # sets join type if input is set correctly. Else sets to left
     try:
         if type(user_input_decision_list[4].lower()) == str and user_input_decision_list[4].lower() in ['left', 'right',
                                                                                                         'inner']:
@@ -157,18 +172,19 @@ while True:
         join_type = 'left'
         check += 1
 
+    # breaks the loop if conditions are met
     if check >= 1:
         break
 
+# Location of result file TODO set to default
 result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
 
-index = 0
-result = []
-
-# LEFT
+# LEFT merge
 if join_type == 'left':
     result = []
     index = 0
+
+    # checks which column is to be merged
     for elem in ffile_list[0][0].split(','):
         if elem == column_name:
             ffile_column_index = index
@@ -177,6 +193,8 @@ if join_type == 'left':
             ffile_column_index = -1
         index += 1
     index = 0
+
+    # checks which column is to be merged
     for elem in sfile_list[0][0].split(','):
         if elem == column_name:
             sfile_column_index = index
@@ -185,12 +203,15 @@ if join_type == 'left':
             sfile_column_index = -1
         index += 1
 
+    # merge the files
     for elem in ffile_list:
         result.append(elem)
     result[0][0] = result[0][0] + ',' + ",".join(sfile_header)
     index = 1
     for i in range(1, len(ffile_list)):
         for j in range(1, len(sfile_list)):
+
+            # if in first and second column has the same value it merges
             if result[i][0].split(',')[ffile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
                 try:
                     result[index][0] = result[index][0] + ',' + sfile_list[j][0]
@@ -202,11 +223,14 @@ if join_type == 'left':
 
     index = 0
     temp = result[0]
+
+    # adds column if files column number is not equal
     for row in result:
         if len(row[0].split(',')) != len(temp[0].split(',')):
             result[index][0] = result[index][0] + "," * (len(sfile_list[0][0].split(',')))
         index += 1
 
+    # Saves result to files
     with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
 
         for row in result:
@@ -218,18 +242,23 @@ if join_type == 'left':
 if join_type == 'right':
     result = []
     index = 0
+
+    # checks which column is to be merged
     for elem in sfile_list[0][0].split(','):
         if elem == column_name:
             sfile_column_index = index
             break
         index += 1
     index = 0
+
+    # checks which column is to be merged
     for elem in ffile_list[0][0].split(','):
         if elem == column_name:
             ffile_column_index = index
             break
         index += 1
 
+    # merge the files
     for elem in sfile_list:
         result.append(elem)
     result[0][0] = result[0][0] + ',' + ",".join(ffile_header)
@@ -237,6 +266,7 @@ if join_type == 'right':
     for i in range(1, len(sfile_list)):
         for j in range(1, len(ffile_list)):
 
+            # if in first and second column has the same value it merges
             if result[i][0].split(',')[sfile_column_index] == ffile_list[j][0].split(',')[ffile_column_index]:
                 try:
                     result[index][0] = result[index][0] + ',' + ffile_list[j][0]
@@ -248,11 +278,14 @@ if join_type == 'right':
 
     index = 0
     temp = result[0]
+
+    # adds column if files column number is not equal
     for row in result:
         if len(row[0].split(',')) != len(temp[0].split(',')):
             result[index][0] = result[index][0] + "," * (len(ffile_list[0][0].split(',')))
         index += 1
 
+    # Saves result to files
     with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
 
         for row in result:
@@ -261,25 +294,33 @@ if join_type == 'right':
             file.write('\n')
 
 # INNER
-
 if join_type == 'inner':
     result = [[""]]
     index = 0
+
+    # checks which column is to be merged
     for elem in sfile_list[0][0].split(','):
         if elem == column_name:
             sfile_column_index = index
             break
         index += 1
     index = 0
+
+    # checks which column is to be merged
     for elem in ffile_list[0][0].split(','):
         if elem == column_name:
             ffile_column_index = index
             break
         index += 1
+
+    # Combines headers
     result[0][0] = ",".join(ffile_header) + ',' + ",".join(sfile_header)
+
+    # merges files
     for i in range(1, len(ffile_list)):
         for j in range(1, len(sfile_list)):
 
+            # if in first and second column has the same value it merges
             if ffile_list[i][0].split(',')[sfile_column_index] == sfile_list[j][0].split(',')[sfile_column_index]:
                 try:
                     result.append([ffile_list[i][0] + ',' + sfile_list[j][0]])
@@ -289,6 +330,7 @@ if join_type == 'inner':
                     break
         index += 1
 
+    # Saves result to files
     with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
 
         for row in result:
@@ -296,6 +338,7 @@ if join_type == 'inner':
                 file.write(str(row[i]))
             file.write('\n')
 
+# Print result for user
 with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv') as file:
     rfile_list = file.readlines()
     for i in range(0, len(rfile_list)):
@@ -310,4 +353,5 @@ with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv') as file:
         print(row[0])
     print("--------------------------")
 
+# Exit - could be loop for new files but not specified by PO
 input("Press to Exit")
