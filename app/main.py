@@ -11,6 +11,7 @@ def check_headers(ffile_header, sfile_header):
                 result.append(n)
     return result
 
+
 # Method to make a list of each column with header and values
 def list_by_column(file_list, file_header):
     temp = []
@@ -25,6 +26,7 @@ def list_by_column(file_list, file_header):
         if index > 3:
             index = 0
     return column_list
+
 
 # Method to print by column. OBSOLETE
 def print_by_column(column_list, list_of_valid_headers):
@@ -42,6 +44,7 @@ def print_by_column(column_list, list_of_valid_headers):
             result.append([])
         index += 1
     return result
+
 
 # Method to print columns to rows. OBSOLETE
 def print_to_rows(fcolumn_list, scolumn_list):
@@ -72,6 +75,7 @@ def print_to_rows(fcolumn_list, scolumn_list):
             if len(result[i].split(',')) != len(result[0].split(',')):
                 result[i] = result[i] + "," * (len(scolumn_list) - 2)
     return result
+
 
 # Print startup
 print(
@@ -123,7 +127,7 @@ while True:
     except IndexError:
         second_file_path = 'C:\Coder\cvs_merger\csv_files\myFile1.csv'
 
-    # opens first file and set it to LIST of LISTS of STRINGS. if no file founded, return to beginning
+    # opens first file and set it to LIST of LISTS of STRINGS. if no file founded, or is too big, return to input
     try:
         with open(first_file_path) as file:
             ffile_list = file.readlines()
@@ -134,9 +138,13 @@ while True:
                     ffile_list[i] = [ffile_list[i]]
             ffile_header = ffile_list[0][0].split(',')
     except FileNotFoundError:
-        print("Wrong file1 path")
+        print("Wrong first file path. Try again!")
+        print("-----------")
+    except MemoryError:
+        print("Too large first file! Use smaller sample")
+        print("-----------")
 
-    # opens second file and set it to LIST of LISTS of STRINGS. if no file founded, return to input
+    # opens second file and set it to LIST of LISTS of STRINGS. if no file founded, or is too big, return to input
     try:
         with open(second_file_path) as file:
             sfile_list = file.readlines()
@@ -147,7 +155,11 @@ while True:
                     sfile_list[i] = [sfile_list[i]]
             sfile_header = sfile_list[0][0].split(',')
     except FileNotFoundError:
-        print("Wrong file2 path")
+        print("Wrong second file path. Try again!")
+        print("-----------")
+    except MemoryError:
+        print("Too large second file! Use smaller sample")
+        print("-----------")
 
     # sets column name if headers present in both of files. default for empty command, return to input if there is no matching ones
     try:
@@ -176,10 +188,10 @@ while True:
     if check >= 1:
         break
 
-# Location of result file TODO set to default
-result_file_path = 'C:\Coder\cvs_merger\csv_files\\resultFile.csv'
+# Location of result file
+result_file_path = '..\csv_files\\resultFile.csv'
 
-# LEFT merge
+# LEFT join
 if join_type == 'left':
     result = []
     index = 0
@@ -230,15 +242,7 @@ if join_type == 'left':
             result[index][0] = result[index][0] + "," * (len(sfile_list[0][0].split(',')))
         index += 1
 
-    # Saves result to files
-    with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
-
-        for row in result:
-            for i in range(0, len(result[0])):
-                file.write(str(row[i]))
-            file.write('\n')
-
-# RIGHT
+# RIGHT join
 if join_type == 'right':
     result = []
     index = 0
@@ -285,15 +289,7 @@ if join_type == 'right':
             result[index][0] = result[index][0] + "," * (len(ffile_list[0][0].split(',')))
         index += 1
 
-    # Saves result to files
-    with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
-
-        for row in result:
-            for i in range(0, len(result[0])):
-                file.write(str(row[i]))
-            file.write('\n')
-
-# INNER
+# INNER join
 if join_type == 'inner':
     result = [[""]]
     index = 0
@@ -330,16 +326,19 @@ if join_type == 'inner':
                     break
         index += 1
 
-    # Saves result to files
-    with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv', 'w') as file:
-
+# Saves result to files
+try:
+    with open(result_file_path, 'w') as file:
         for row in result:
             for i in range(0, len(result[0])):
                 file.write(str(row[i]))
             file.write('\n')
+except MemoryError:
+    print("Out of memory! Use smaller samples!")
+    print("-----------")
 
 # Print result for user
-with open('C:\Coder\cvs_merger\csv_files\\resultFile.csv') as file:
+with open(result_file_path) as file:
     rfile_list = file.readlines()
     for i in range(0, len(rfile_list)):
         if i <= len(rfile_list) - 2:
