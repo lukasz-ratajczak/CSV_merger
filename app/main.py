@@ -1,6 +1,3 @@
-# DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\myFile0.csv C:\Coder\cvs_merger\csv_files\myFile1.csv id left
-# DEFAULT COMMAND: join C:\Coder\cvs_merger\csv_files\file0.csv C:\Coder\cvs_merger\csv_files\file1.csv id left
-
 # Method that returns same header columns in both files
 def check_headers(ffile_header, sfile_header):
     result = []
@@ -26,56 +23,6 @@ def list_by_column(file_list, file_header):
         if index > 3:
             index = 0
     return column_list
-
-
-# Method to print by column. OBSOLETE
-def print_by_column(column_list, list_of_valid_headers):
-    index = 0
-    result = [[]]
-    for column in column_list:
-        for elem in column:
-            if elem in list_of_valid_headers:
-                break
-            else:
-                result[index].append(elem)
-        if result[-1] == []:
-            continue
-        else:
-            result.append([])
-        index += 1
-    return result
-
-
-# Method to print columns to rows. OBSOLETE
-def print_to_rows(fcolumn_list, scolumn_list):
-    temp = ''
-    result = []
-    index = 0
-
-    for n in range(0, len(fcolumn_list[0]) - 1):
-        for m in range(0, len(fcolumn_list) - 1):
-            temp += (f"{fcolumn_list[m][n]},")
-        result.append(temp)
-        temp = ''
-    temp = ''
-    for n in range(0, len(scolumn_list[0]) - 1):
-        for m in range(0, len(scolumn_list) - 1):
-            temp += (f"{scolumn_list[m][n]},")
-        temp = temp[:-1]
-        try:
-            result[index] = result[index] + temp
-        except IndexError:
-            result.append("," * (len(fcolumn_list) - 1) + temp)
-        index += 1
-        temp = ''
-
-    if len(result[0].split(',')) != len(result[-1].split(',')):
-        for i in range(len(result)):
-
-            if len(result[i].split(',')) != len(result[0].split(',')):
-                result[i] = result[i] + "," * (len(scolumn_list) - 2)
-    return result
-
 
 # Print startup
 print(

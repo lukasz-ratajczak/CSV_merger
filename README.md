@@ -34,6 +34,12 @@ Full command:
 
 User enter paths to files, what column to be merged by, and what type of merging. 
 
+Example:
+`join C:\XYZ\cvs_merger\csv_files\myFile0.csv C:\XYZ\cvs_merger\csv_files\myFile1.csv id left`
+
+
+App needs to have directory `../csv_files`
+
 <hr>
 
 #### Things to work on
@@ -43,6 +49,7 @@ User enter paths to files, what column to be merged by, and what type of merging
 <li>Continuous working mode</li>
 <li>Simplification of code</li>
 <li>Better performance</li>
+<li>User choice for only printing the file or only saving it</li>
 </ol>   
 
 <hr>
